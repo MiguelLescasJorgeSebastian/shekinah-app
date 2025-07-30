@@ -42,21 +42,42 @@ class DocumentController extends Controller
             });
         }
 
-        $documents = $query->orderBy('created_at', 'desc')->paginate(12);
+        $documents = $query->orderBy('created_at', 'desc')->get();
 
         // Filtrar documentos basado en permisos de acceso
-        $documents->getCollection()->transform(function ($document) use ($user) {
-            if (!$document->userHasAccess($user)) {
-                return null;
-            }
-            return $document;
-        })->filter();
+        $filteredDocuments = $documents->filter(function ($document) use ($user) {
+            return $document->userHasAccess($user);
+        });
+
+        // Transformar datos para el frontend
+        $transformedDocuments = $filteredDocuments->map(function ($document) {
+            return [
+                'id' => $document->id,
+                'title' => $document->title,
+                'description' => $document->description,
+                'file_name' => $document->original_filename ?? 'archivo.pdf',
+                'file_size' => $document->file_size ?? 0,
+                'file_type' => $document->mime_type ?? 'application/pdf',
+                'ministry_id' => $document->ministry_id,
+                'uploaded_by_id' => $document->uploaded_by,
+                'created_at' => $document->created_at->toISOString(),
+                'updated_at' => $document->updated_at->toISOString(),
+                'ministry' => $document->ministry ? [
+                    'id' => $document->ministry->id,
+                    'name' => $document->ministry->name,
+                    'color' => $document->ministry->color ?? '#3B82F6',
+                ] : null,
+                'uploadedBy' => [
+                    'id' => $document->uploader->id,
+                    'name' => $document->uploader->name,
+                    'email' => $document->uploader->email,
+                ],
+            ];
+        })->values();
 
         return Inertia::render('Documents/Index', [
-            'documents' => $documents,
-            'ministries' => Ministry::all(),
-            'types' => Document::getTypes(),
-            'filters' => $request->only(['type', 'ministry_id', 'search']),
+            'documents' => $transformedDocuments,
+            'ministries' => Ministry::where('is_active', true)->get(['id', 'name', 'color']),
             'canCreate' => $user->can('create documents'),
         ]);
     }
