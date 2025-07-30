@@ -6,7 +6,6 @@ import {
     Plus,
     Eye,
     Edit,
-    Trash2,
     Church
 } from 'lucide-react';
 
@@ -21,15 +20,15 @@ interface Ministry {
         name: string;
         email: string;
     };
-    parent_ministry?: {
+    parentMinistry?: {
         id: number;
         name: string;
     };
-    child_ministries: Array<{
+    childMinistries?: Array<{
         id: number;
         name: string;
     }>;
-    servers: Array<{
+    servers?: Array<{
         id: number;
         user: {
             name: string;
@@ -139,13 +138,13 @@ export default function MinistriesIndex({ ministries, canCreate }: MinistriesInd
                                 )}
 
                                 {/* Ministerio padre */}
-                                {ministry.parent_ministry && (
+                                {ministry.parentMinistry && (
                                     <div className="mb-4">
                                         <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                                             Pertenece a
                                         </p>
                                         <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                                            {ministry.parent_ministry.name}
+                                            {ministry.parentMinistry.name}
                                         </p>
                                     </div>
                                 )}
@@ -154,19 +153,19 @@ export default function MinistriesIndex({ ministries, canCreate }: MinistriesInd
                                 <div className="flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-600">
                                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                                         <Users className="h-4 w-4" />
-                                        <span>{ministry.servers.length} servidores</span>
+                                        <span>{ministry.servers?.length || 0} servidores</span>
                                     </div>
 
-                                    {ministry.child_ministries.length > 0 && (
+                                    {(ministry.childMinistries?.length || 0) > 0 && (
                                         <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                                             <Church className="h-4 w-4" />
-                                            <span>{ministry.child_ministries.length} sub-ministerios</span>
+                                            <span>{ministry.childMinistries?.length || 0} sub-ministerios</span>
                                         </div>
                                     )}
                                 </div>
 
                                 {/* Servidores recientes */}
-                                {ministry.servers.length > 0 && (
+                                {ministry.servers && ministry.servers.length > 0 && (
                                     <div className="mt-4">
                                         <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
                                             Servidores Recientes
@@ -178,7 +177,7 @@ export default function MinistriesIndex({ ministries, canCreate }: MinistriesInd
                                                     className="flex items-center justify-between text-sm"
                                                 >
                                                     <span className="text-gray-900 dark:text-white">
-                                                        {server.user.name}
+                                                        {server.user?.name || 'Usuario sin nombre'}
                                                     </span>
                                                     {server.position && (
                                                         <span className="text-gray-500 dark:text-gray-400">

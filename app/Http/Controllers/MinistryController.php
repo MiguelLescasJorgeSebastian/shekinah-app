@@ -34,6 +34,16 @@ class MinistryController extends Controller
 
         $ministries = $query->where('is_active', true)->get();
 
+        // Asegurar que las relaciones estén inicializadas
+        $ministries->each(function ($ministry) {
+            if (!$ministry->relationLoaded('childMinistries')) {
+                $ministry->load('childMinistries');
+            }
+            if (!$ministry->relationLoaded('servers')) {
+                $ministry->load('servers.user');
+            }
+        });
+
         return Inertia::render('Ministries/Index', [
             'ministries' => $ministries,
             'canCreate' => $user->can('create ministries'),

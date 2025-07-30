@@ -56,6 +56,7 @@ class ServerController extends Controller
             'servers' => $servers,
             'ministries' => $ministries,
             'filters' => $request->only(['search', 'ministry_id', 'is_external']),
+            'canCreate' => $request->user()->can('create servers'),
         ]);
     }
 

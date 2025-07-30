@@ -53,6 +53,13 @@ class RolesAndPermissionsSeeder extends Seeder
             'delete resources',
             'share resources',
 
+            // Permisos de documentos
+            'view documents',
+            'create documents',
+            'edit documents',
+            'delete documents',
+            'share documents',
+
             // Permisos administrativos
             'manage users',
             'manage roles',
@@ -95,6 +102,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'create resources',
             'edit resources',
             'share resources',
+            'view documents',
+            'create documents',
+            'edit documents',
+            'share documents',
         ]);
 
         // Servidor/Voluntario - permisos de solo lectura principalmente
@@ -105,6 +116,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'view events',
             'view schedules',
             'view resources',
+            'view documents',
         ]);
 
         // Usuario Pendiente - sin permisos hasta que se asigne rol
